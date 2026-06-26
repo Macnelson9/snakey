@@ -11,7 +11,6 @@ const session: SessionRecord = {
   runId: "0xabc0000000000000000000000000000000000000000000000000000000000001",
   seed: 0xc0ffee,
   player: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  identity: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
   issuedAt: 1_700_000_000_000,
   used: false,
 };
@@ -77,21 +76,19 @@ test("serializeSettle preserves rejected and no_reward shapes", () => {
   assert.doesNotThrow(() => JSON.stringify(noReward));
 });
 
-test("parseSessionBody accepts a well-formed body and normalizes identity casing", () => {
-  const r = parseSessionBody({
-    player: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    identity: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  });
+test("parseSessionBody accepts a body carrying only the player wallet", () => {
+  // The client no longer asserts an identity — the server derives it on-chain at
+  // settle (the GoodDollar gate). /session needs only the payout wallet.
+  const r = parseSessionBody({ player: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8" });
   assert.ok(r.ok);
   if (!r.ok) return;
   assert.equal(r.value.player, "0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
-  assert.equal(r.value.identity, "0x70997970c51812dc3a010c7d01b50e0d17dc79c8", "identity lowercased for stable keying");
 });
 
-test("parseSessionBody rejects bad addresses and missing fields", () => {
-  assert.equal(parseSessionBody({ player: "nope", identity: "x" }).ok, false);
-  assert.equal(parseSessionBody({ player: "0x123", identity: "x" }).ok, false);
-  assert.equal(parseSessionBody({ identity: "x" }).ok, false);
+test("parseSessionBody rejects a bad or missing player", () => {
+  assert.equal(parseSessionBody({ player: "nope" }).ok, false);
+  assert.equal(parseSessionBody({ player: "0x123" }).ok, false);
+  assert.equal(parseSessionBody({}).ok, false);
   assert.equal(parseSessionBody(null).ok, false);
 });
 

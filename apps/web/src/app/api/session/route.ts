@@ -1,6 +1,7 @@
-// POST /session — issues a CSPRNG seed-bound, single-use, time-boxed,
-// identity-bound session (CLAUDE.md settle flow step 1). No scoreable run can
-// start without one, which closes seed precomputation.
+// POST /session — issues a CSPRNG seed-bound, single-use, time-boxed session
+// (CLAUDE.md settle flow step 1). No scoreable run can start without one, which
+// closes seed precomputation. No identity is taken here: play is anonymous, and
+// the verified-human identity is derived on-chain at settle (the GoodDollar gate).
 import { NextResponse } from "next/server";
 import { parseSessionBody, serializeSession } from "@/lib/api.ts";
 import { getSessionTtlMs, getStore } from "@/lib/config.ts";
@@ -21,7 +22,6 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const session = await getStore().create({
     player: parsed.value.player,
-    identity: parsed.value.identity,
     ttlMs: getSessionTtlMs(),
   });
 

@@ -43,7 +43,6 @@ export function createMemoryStore(
         runId: freshRunId(),
         seed: seedGen() >>> 0,
         player: input.player as Address,
-        identity: input.identity,
         issuedAt,
         used: false,
       };

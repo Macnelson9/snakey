@@ -19,7 +19,6 @@ function asRecord(body: unknown): Record<string, unknown> | null {
 
 export interface SessionBody {
   player: Address;
-  identity: string;
 }
 
 export function parseSessionBody(body: unknown): Parsed<SessionBody> {
@@ -28,13 +27,9 @@ export function parseSessionBody(body: unknown): Parsed<SessionBody> {
   if (typeof b.player !== "string" || !ADDRESS_RE.test(b.player)) {
     return { ok: false, error: "player must be a 0x address" };
   }
-  if (typeof b.identity !== "string" || b.identity.length === 0) {
-    return { ok: false, error: "identity is required" };
-  }
-  // identity is keyed in the store (daily cap, sessions); normalize casing so an
-  // address-shaped identity is one bucket regardless of checksum casing.
-  const identity = ADDRESS_RE.test(b.identity) ? b.identity.toLowerCase() : b.identity;
-  return { ok: true, value: { player: b.player as Address, identity } };
+  // No client-supplied identity: the server derives the verified-human identity
+  // on-chain at settle (the GoodDollar gate), so it can never be spoofed here.
+  return { ok: true, value: { player: b.player as Address } };
 }
 
 export interface SettleBody {
