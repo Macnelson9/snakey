@@ -1,0 +1,19 @@
+{
+  "name": "@nokiadot/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, integer-only Snake engine. Shared by client render loop and server replay verifier so scores cannot diverge.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/replay.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
