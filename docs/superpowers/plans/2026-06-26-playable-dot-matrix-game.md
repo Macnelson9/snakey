@@ -44,7 +44,7 @@ test("every theme in THEME_ORDER defines every required token", () => {
   for (const id of THEME_ORDER) {
     const t = THEMES[id];
     assert.ok(t, `missing theme ${id}`);
-    for (const k of REQUIRED) assert.equal(typeof (t as Record<string, unknown>)[k], "string", `${id}.${k}`);
+    for (const k of REQUIRED) assert.equal(typeof (t as unknown as Record<string, unknown>)[k], "string", `${id}.${k}`);
   }
 });
 
@@ -64,7 +64,7 @@ test("themeVars maps tokens to CSS custom properties with shadow fallbacks", () 
   assert.equal(v["--lit-shadow"], "none"); // nokia has no glow
   assert.equal(v["--food-shadow"], "inset 0 0 0 1.2px var(--board)");
   const g = themeVars(THEMES.phosphor);
-  assert.ok(g["--lit-shadow"].includes("0 0")); // phosphor glows
+  assert.ok(g["--lit-shadow"]!.includes("0 0")); // phosphor glows
 });
 ```
 
