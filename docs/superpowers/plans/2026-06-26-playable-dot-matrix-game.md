@@ -290,7 +290,7 @@ test("queueDir logs an input only when pendingDir actually changes", () => {
   assert.equal(c.inputs.length, 0);
   c.queueDir(0); // up -> a real turn
   assert.equal(c.inputs.length, 1);
-  c.queueDir(2); // down is a 180 from up -> engine rejects, no log
+  c.queueDir(3); // left reverses the committed (un-stepped) right heading -> engine rejects, no log
   assert.equal(c.inputs.length, 1);
 });
 
@@ -408,7 +408,12 @@ test("createSession POSTs the player to /api/session", async () => {
   assert.equal(out.seed, 7);
   assert.equal(calls[0]!.url, "/api/session");
   assert.equal(calls[0]!.init.method, "POST");
-  assert.deepEqual(JSON.parse(calls[0]!.init.body as string), { player: PLACEHOLDER_PLAYER });
+  assert.deepEqual(JSON.parse(calls[0]!.init.body as string), { player: PLACEHOLDER_PLAYER, identity: PLACEHOLDER_PLAYER });
+});
+
+test("createSession throws when the response is not ok", async () => {
+  const { fn } = stubFetch({ error: "bad" }, { ok: false, status: 500 });
+  await assert.rejects(() => createSession(PLACEHOLDER_PLAYER, fn));
 });
 
 test("submitRun POSTs runId+inputs and returns the settle body even on 409", async () => {
@@ -447,7 +452,11 @@ export async function createSession(player: Address, fetchImpl: FetchImpl = fetc
   const res = await fetchImpl("/api/session", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ player }),
+    // identity is required by the current /session contract and keys the daily
+    // cap; with a placeholder player it is just the player address. Once the
+    // GoodDollar identity gate merges, /session derives identity server-side and
+    // ignores this field.
+    body: JSON.stringify({ player, identity: player }),
   });
   if (!res.ok) throw new Error(`/api/session failed: ${res.status}`);
   return res.json() as Promise<SessionResponse>;

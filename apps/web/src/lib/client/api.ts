@@ -21,7 +21,11 @@ export async function createSession(player: Address, fetchImpl: FetchImpl = fetc
   const res = await fetchImpl("/api/session", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ player }),
+    // identity is required by the current /session contract and keys the daily
+    // cap; with a placeholder player it is just the player address. Once the
+    // GoodDollar identity gate merges, /session derives identity server-side and
+    // ignores this field.
+    body: JSON.stringify({ player, identity: player }),
   });
   if (!res.ok) throw new Error(`/api/session failed: ${res.status}`);
   return res.json() as Promise<SessionResponse>;

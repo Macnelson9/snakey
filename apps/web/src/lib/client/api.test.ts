@@ -17,7 +17,12 @@ test("createSession POSTs the player to /api/session", async () => {
   assert.equal(out.seed, 7);
   assert.equal(calls[0]!.url, "/api/session");
   assert.equal(calls[0]!.init.method, "POST");
-  assert.deepEqual(JSON.parse(calls[0]!.init.body as string), { player: PLACEHOLDER_PLAYER });
+  assert.deepEqual(JSON.parse(calls[0]!.init.body as string), { player: PLACEHOLDER_PLAYER, identity: PLACEHOLDER_PLAYER });
+});
+
+test("createSession throws when the response is not ok", async () => {
+  const { fn } = stubFetch({ error: "bad" }, { ok: false, status: 500 });
+  await assert.rejects(() => createSession(PLACEHOLDER_PLAYER, fn));
 });
 
 test("submitRun POSTs runId+inputs and returns the settle body even on 409", async () => {
@@ -25,5 +30,6 @@ test("submitRun POSTs runId+inputs and returns the settle body even on 409", asy
   const out = await submitRun("0xrun", [{ tick: 0, dir: 1 }], fn);
   assert.equal(out.status, "rejected");
   assert.equal(calls[0]!.url, "/api/settle");
+  assert.equal(calls[0]!.init.method, "POST");
   assert.deepEqual(JSON.parse(calls[0]!.init.body as string), { runId: "0xrun", inputs: [{ tick: 0, dir: 1 }] });
 });
