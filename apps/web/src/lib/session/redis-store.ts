@@ -70,7 +70,6 @@ export function createRedisStore(opts: RedisStoreOptions): SessionStore {
         runId: freshRunId(),
         seed: freshSeed(),
         player: input.player,
-        identity: input.identity,
         issuedAt: Date.now(),
         used: false,
       };
@@ -79,7 +78,6 @@ export function createRedisStore(opts: RedisStoreOptions): SessionStore {
         runId: record.runId,
         seed: String(record.seed),
         player: record.player,
-        identity: record.identity,
         issuedAt: String(record.issuedAt),
         used: "0",
       });
@@ -99,7 +97,6 @@ export function createRedisStore(opts: RedisStoreOptions): SessionStore {
         runId: h.runId as Hex,
         seed: Number(h.seed),
         player: h.player as Address,
-        identity: h.identity!,
         issuedAt: Number(h.issuedAt),
         used: h.used === "1",
       };

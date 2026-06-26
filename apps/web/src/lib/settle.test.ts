@@ -13,6 +13,7 @@ import {
   type State, type Dir, type Input,
 } from "@nokiadot/engine";
 import { createMemoryStore } from "./session/memory-store.ts";
+import { createFakeVerifier } from "./identity/fake-verifier.ts";
 import { recoverVoucherSigner } from "./voucher.ts";
 import { rewardForScore, REWARD_PARAMS, G$ } from "./reward.ts";
 import { settle, type SettleParams } from "./settle.ts";
@@ -63,6 +64,8 @@ function harness(overrides: Partial<SettleParams> = {}) {
     dailyCap: G$(10),
     minMsPerTick: 50,
     voucherTtlMs: 10 * 60_000,
+    // selfRoot ⇒ root === player.toLowerCase() === IDENTITY, so the cap keys line up.
+    identityVerifier: createFakeVerifier({ selfRoot: true }),
     now: clock.now,
     ...overrides,
   };
@@ -70,7 +73,7 @@ function harness(overrides: Partial<SettleParams> = {}) {
 }
 
 async function issue(store: SettleParams["store"]) {
-  return store.create({ player: PLAYER, identity: IDENTITY, ttlMs: 60 * 60_000 });
+  return store.create({ player: PLAYER, ttlMs: 60 * 60_000 });
 }
 
 test("happy path: replays to the authoritative score and signs a recoverable voucher", async () => {
@@ -204,4 +207,66 @@ test("padding the log with inputs for never-reached ticks is accepted but flagge
   assert.ok(res.flags.includes("future_inputs"));
   // Flagged, but still paid the authoritative score — flags review, never block.
   assert.equal(res.score, simulate(session.seed, padded).score);
+});
+
+test("an unverified player earns nothing AND the run survives for retry after verifying", async () => {
+  // The player taps claim before face-verifying. They earn nothing, but the run
+  // must NOT be consumed — after verifying they re-submit the same run and get paid.
+  const { store, params, clock } = harness({ identityVerifier: createFakeVerifier() });
+  const session = await issue(store);
+  const log = greedyLog(session.seed);
+  clock.advance(log.ticks * params.minMsPerTick + 5_000);
+
+  const first = await settle(params, { runId: session.runId, inputs: log.inputs });
+  assert.equal(first.status, "no_reward");
+  if (first.status === "no_reward") assert.equal(first.reason, "not_verified");
+  assert.equal((await store.get(session.runId))?.used, false, "unverified run is NOT consumed");
+
+  // After GoodDollar face verification, the SAME run settles successfully.
+  const verified = { ...params, identityVerifier: createFakeVerifier({ selfRoot: true }) };
+  const second = await settle(verified, { runId: session.runId, inputs: log.inputs });
+  assert.equal(second.status, "accepted");
+});
+
+test("two wallets sharing one GoodDollar root share the daily cap", async () => {
+  const ROOT = "0x90F79bf6EB2c4f870365E785982E1f101E93b906".toLowerCase();
+  const PLAYER_B = "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC" as const;
+  let t = 1_700_000_000_000;
+  const clock = { now: () => t, advance: (ms: number) => { t += ms; } };
+  const store = createMemoryStore(clock.now, () => PINNED_SEED);
+  const identityVerifier = createFakeVerifier({
+    roots: { [PLAYER.toLowerCase()]: ROOT, [PLAYER_B.toLowerCase()]: ROOT },
+  });
+
+  // First wallet plays and is paid its full reward.
+  const sA = await store.create({ player: PLAYER, ttlMs: 60 * 60_000 });
+  const logA = greedyLog(sA.seed);
+  // Size the cap so exactly one run exhausts the shared root's daily budget.
+  const params: SettleParams = {
+    store, scorerPrivateKey: SCORER_PK, voucherContext: VCTX,
+    dailyCap: rewardForScore(logA.score), minMsPerTick: 50, voucherTtlMs: 10 * 60_000,
+    identityVerifier, now: clock.now,
+  };
+  clock.advance(logA.ticks * params.minMsPerTick + 5_000);
+  const rA = await settle(params, { runId: sA.runId, inputs: logA.inputs });
+  assert.equal(rA.status, "accepted");
+
+  // Second, DIFFERENT wallet, same verified human → the cap is already spent.
+  const sB = await store.create({ player: PLAYER_B, ttlMs: 60 * 60_000 });
+  const logB = greedyLog(sB.seed);
+  clock.advance(logB.ticks * params.minMsPerTick + 5_000);
+  const rB = await settle(params, { runId: sB.runId, inputs: logB.inputs });
+  assert.equal(rB.status, "no_reward");
+  if (rB.status === "no_reward") assert.equal(rB.reason, "cap_reached");
+});
+
+test("a below-bar run never consults the identity verifier (no wasted RPC)", async () => {
+  const identityVerifier = createFakeVerifier({ selfRoot: true });
+  const { store, params, clock } = harness({ identityVerifier });
+  const session = await issue(store);
+  clock.advance(60_000);
+  const res = await settle(params, { runId: session.runId, inputs: [] });
+  assert.equal(res.status, "no_reward");
+  if (res.status === "no_reward") assert.equal(res.reason, "below_bar");
+  assert.equal(identityVerifier.calls.length, 0, "verifier not called for sub-bar runs");
 });

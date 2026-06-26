@@ -12,8 +12,6 @@ export interface SessionRecord {
   seed: number;
   /** Payout wallet that will redeem the voucher. */
   player: Address;
-  /** GoodDollar identity the session (and daily cap) is bound to. */
-  identity: string;
   /** Server wall-clock ms at issuance — the only trusted time source. */
   issuedAt: number;
   /** True once settled; sessions are single-use. */
@@ -22,7 +20,6 @@ export interface SessionRecord {
 
 export interface CreateSessionInput {
   player: Address;
-  identity: string;
   /** Lifetime in ms; the session cannot be settled after it elapses. */
   ttlMs: number;
 }

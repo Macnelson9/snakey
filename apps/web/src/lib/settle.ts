@@ -9,12 +9,15 @@ import type { Hex } from "viem";
 import type { SessionStore } from "./session/store.ts";
 import { rewardForScore, REWARD_PARAMS, type RewardParams } from "./reward.ts";
 import { signVoucher, type SignedVoucher, type VoucherContext } from "./voucher.ts";
+import type { IdentityVerifier } from "./identity/verifier.ts";
 
 export interface SettleParams {
   store: SessionStore;
   /** The crown-jewel scorer signing key (kept in KMS/HSM in production). */
   scorerPrivateKey: Hex;
   voucherContext: VoucherContext;
+  /** On-chain GoodDollar identity gate; the daily cap is keyed on its root. */
+  identityVerifier: IdentityVerifier;
   /** Hard per-identity daily payout cap, in G$ wei. */
   dailyCap: bigint;
   /** Minimum real ms a single engine tick can represent (wall-clock plausibility). */
@@ -39,7 +42,7 @@ export type RejectReason =
   | "replay"
   | "implausible_timing";
 
-export type NoRewardReason = "below_bar" | "cap_reached";
+export type NoRewardReason = "below_bar" | "cap_reached" | "not_verified";
 
 export type SettleResult =
   | {
@@ -91,18 +94,6 @@ export async function settle(p: SettleParams, req: SettleRequest): Promise<Settl
   // Authoritative replay on the shared engine. The claimed score does not exist.
   const result = simulate(session.seed, req.inputs);
 
-  // Claim the session atomically — exactly one settle per session. A second
-  // attempt (or a concurrent race) loses here.
-  const claimed = await p.store.consume(req.runId);
-  if (!claimed) return { status: "rejected", reason: "replay" };
-
-  // Wall-clock plausibility, server timestamps only: a run of N ticks cannot
-  // have been produced faster than N * minMsPerTick of real time.
-  const elapsed = now() - session.issuedAt;
-  if (elapsed < result.ticks * p.minMsPerTick) {
-    return { status: "rejected", reason: "implausible_timing" };
-  }
-
   // Soft heuristics: raise review flags, never hard-block (CLAUDE.md step 3).
   const flags: string[] = [];
   const maxTick = req.inputs.reduce((m, i) => Math.max(m, i.tick), -1);
@@ -114,18 +105,44 @@ export async function settle(p: SettleParams, req: SettleRequest): Promise<Settl
 
   const reward = rewardForScore(result.score, rewardParams);
   if (reward === 0n) {
+    // Sub-bar runs are deterministic and earn nothing; no need to spend the
+    // identity RPC or burn the session — they can be replayed harmlessly.
     return { status: "no_reward", reason: "below_bar", score: result.score, ticks: result.ticks, amount: 0n };
   }
 
-  // Hard per-identity daily cap: clamp the payout to what's left today.
+  // Identity gate (CLAUDE.md decision #4: before payout, never before play). The
+  // server derives the verified-human identity on-chain — the client cannot
+  // assert it. Checked BEFORE consume so an unverified claim does not burn the
+  // run: the player face-verifies, then re-submits the same run and is paid.
+  const identity = await p.identityVerifier.check(session.player);
+  if (!identity.verified) {
+    return { status: "no_reward", reason: "not_verified", score: result.score, ticks: result.ticks, amount: 0n };
+  }
+
+  // Claim the session atomically — exactly one paid settle per session. A second
+  // attempt (or a concurrent race) loses here.
+  const claimed = await p.store.consume(req.runId);
+  if (!claimed) return { status: "rejected", reason: "replay" };
+
+  // Wall-clock plausibility, server timestamps only: a run of N ticks cannot
+  // have been produced faster than N * minMsPerTick of real time. Checked AFTER
+  // consume so an implausibly-fast run is burned — otherwise it could be replayed
+  // later once enough real time had elapsed to look plausible.
+  const elapsed = now() - session.issuedAt;
+  if (elapsed < result.ticks * p.minMsPerTick) {
+    return { status: "rejected", reason: "implausible_timing" };
+  }
+
+  // Hard daily cap, keyed on the GoodDollar root so linked wallets share one
+  // bucket. Clamp the payout to what's left today.
   const day = dayKey(now());
-  const spent = await p.store.getDailyTotal(session.identity, day);
+  const spent = await p.store.getDailyTotal(identity.root, day);
   const remaining = p.dailyCap - spent;
   if (remaining <= 0n) {
     return { status: "no_reward", reason: "cap_reached", score: result.score, ticks: result.ticks, amount: 0n };
   }
   const amount = reward < remaining ? reward : remaining;
-  await p.store.addDailyTotal(session.identity, day, amount);
+  await p.store.addDailyTotal(identity.root, day, amount);
 
   const deadline = BigInt(now() + p.voucherTtlMs) / 1000n; // unix seconds
   const signed = await signVoucher(

@@ -3,11 +3,14 @@
 // present (production / multi-instance), otherwise the in-memory store for local
 // dev. Secrets required only by /settle (the scorer key, the rewards contract)
 // are validated lazily so /session works without them in development.
-import type { Address, Hex } from "viem";
+import { http, type Address, type Hex } from "viem";
 import { G$ } from "./reward.ts";
 import { createMemoryStore } from "./session/memory-store.ts";
 import { createRedisStore } from "./session/redis-store.ts";
 import type { SessionStore } from "./session/store.ts";
+import { createOnchainVerifier } from "./identity/onchain-verifier.ts";
+import { createFakeVerifier } from "./identity/fake-verifier.ts";
+import type { IdentityVerifier } from "./identity/verifier.ts";
 import type { SettleParams } from "./settle.ts";
 
 function num(name: string, fallback: number): number {
@@ -47,15 +50,43 @@ export function getSessionTtlMs(): number {
   return num("SESSION_TTL_MS", 30 * 60_000);
 }
 
+let verifierSingleton: IdentityVerifier | undefined;
+
+/**
+ * The GoodDollar identity gate. Reads the live Identity contract when configured
+ * (IDENTITY_CONTRACT + RPC_URL); otherwise falls back — in dev only — to a fake
+ * that treats each player as its own root, so the reward loop runs locally
+ * without GoodDollar. Production requires the real verifier.
+ */
+export function getIdentityVerifier(): IdentityVerifier {
+  if (verifierSingleton) return verifierSingleton;
+  const contract = process.env.IDENTITY_CONTRACT;
+  const rpcUrl = process.env.RPC_URL;
+  if (contract && rpcUrl) {
+    verifierSingleton = createOnchainVerifier({
+      transport: http(rpcUrl),
+      contract: contract as Address,
+    });
+  } else {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("IDENTITY_CONTRACT and RPC_URL are required in production");
+    }
+    console.warn("[config] No IDENTITY_CONTRACT/RPC_URL — using a self-root fake verifier (dev only, no sybil resistance).");
+    verifierSingleton = createFakeVerifier({ selfRoot: true });
+  }
+  return verifierSingleton;
+}
+
 /** Assemble settle parameters; validates the secrets /settle needs. */
 export function getSettleParams(): SettleParams {
   return {
     store: getStore(),
     scorerPrivateKey: required("SCORER_PRIVATE_KEY") as Hex,
     voucherContext: {
-      chainId: num("CHAIN_ID", 44787), // Alfajores testnet by default
+      chainId: num("CHAIN_ID", 42220), // Celo mainnet (real G$) by default
       verifyingContract: required("GAME_REWARDS_ADDRESS") as Address,
     },
+    identityVerifier: getIdentityVerifier(),
     dailyCap: G$(num("DAILY_CAP_GD", 6)),
     minMsPerTick: num("MIN_MS_PER_TICK", 50),
     voucherTtlMs: num("VOUCHER_TTL_MS", 10 * 60_000),
