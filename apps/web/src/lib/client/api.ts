@@ -11,7 +11,7 @@ export interface SessionResponse { runId: string; seed: number; issuedAt: number
 
 interface SettleVoucher { player: string; runId: string; amount: string; deadline: string; }
 export type SettleResponse =
-  | { status: "accepted"; score: number; ticks: number; foodEaten: number; died: boolean; amount: string; flagged: boolean; flags: string[]; signer: string; signature: string; voucher: SettleVoucher }
+  | { status: "accepted"; score: number; ticks: number; foodEaten: number; died: boolean; amount: string; flagged: boolean; flags: string[]; signer: string; signature: string; voucher: SettleVoucher; txHash?: string }
   | { status: "no_reward"; reason: "below_bar" | "cap_reached" | "not_verified"; score: number; ticks: number; amount: string }
   | { status: "rejected"; reason: "invalid_input" | "unknown_session" | "replay" | "implausible_timing" };
 
