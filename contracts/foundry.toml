@@ -4,12 +4,20 @@ out = "out"
 test = "test"
 libs = ["lib"]
 solc = "0.8.24"
+# Celo may not support the PUSH0 opcode (EIP-3855); target paris so the bytecode
+# omits it and deploys/runs correctly on Celo.
+evm_version = "paris"
 optimizer = true
 optimizer_runs = 200
 remappings = [
     "forge-std/=lib/forge-std/src/",
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
 ]
+
+[rpc_endpoints]
+# Resolves ${RPC_URL} from contracts/.env, so `--rpc-url celo` works without
+# exporting anything in your shell.
+celo = "${RPC_URL}"
 
 [fmt]
 line_length = 100
