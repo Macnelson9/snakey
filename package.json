@@ -1,5 +1,5 @@
 {
-  "name": "nokiadot",
+  "name": "buga",
   "version": "0.0.0",
   "private": true,
   "description": "Nostalgic Snake/Xenzia PWA on Celo with GoodDollar rewards. Deterministic shared engine; chain touched only at settlement.",

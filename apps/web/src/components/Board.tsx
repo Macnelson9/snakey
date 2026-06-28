@@ -1,4 +1,4 @@
-import { GRID_W, GRID_H, type State } from "@nokiadot/engine";
+import { GRID_W, GRID_H, type State } from "@buga/engine";
 
 export function Board({ state }: { state: State }) {
   const lit = new Set(state.snake.map((c) => c.y * GRID_W + c.x));

@@ -1,5 +1,5 @@
 {
-  "name": "@nokiadot/contracts",
+  "name": "@buga/contracts",
   "version": "0.0.0",
   "private": true,
   "description": "Foundry: GameRewards.sol — holds the G$ pool, redeems EIP-712 vouchers signed by the off-chain scorer.",

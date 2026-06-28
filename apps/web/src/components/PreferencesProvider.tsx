@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { DEFAULT_PREFERENCES, loadPreferences, serializePreferences, type Preferences } from "@/lib/ui/preferences.ts";
 
-const KEY = "nokiadot.prefs";
+const KEY = "buga.prefs";
 const Ctx = createContext<{ prefs: Preferences; setPrefs: (p: Preferences) => void } | null>(null);
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {

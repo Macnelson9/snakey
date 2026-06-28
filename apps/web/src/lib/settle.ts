@@ -4,7 +4,7 @@
 // the integrity gates, and — only if a payout is warranted — signs an EIP-712
 // voucher. The request body carries (runId, inputs) and nothing else: there is
 // deliberately no field in which a client could assert a score.
-import { simulate, MAX_TICKS, type Input } from "@nokiadot/engine";
+import { simulate, MAX_TICKS, type Input } from "@buga/engine";
 import type { Hex } from "viem";
 import type { SessionStore } from "./session/store.ts";
 import { rewardForScore, REWARD_PARAMS, type RewardParams } from "./reward.ts";

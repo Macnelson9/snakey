@@ -1,5 +1,5 @@
 {
-  "name": "@nokiadot/web",
+  "name": "@buga/web",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test \"src/**/*.test.ts\""
   },
   "dependencies": {
-    "@nokiadot/engine": "workspace:*",
+    "@buga/engine": "workspace:*",
     "@upstash/redis": "^1.34.3",
     "next": "^15.1.3",
     "react": "^19.0.0",

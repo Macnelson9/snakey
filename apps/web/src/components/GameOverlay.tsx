@@ -14,7 +14,7 @@ export function GameOverlay({
   if (phase === "idle") {
     return (
       <div className="overlay">
-        <div className="wordmark" style={{ fontSize: 22 }}>NOKIADOT</div>
+        <div className="wordmark" style={{ fontSize: 22 }}>BUGA</div>
         <p style={{ fontSize: 12, opacity: .8 }}>swipe / arrows to steer · eat the dot</p>
         <button className="btn" onClick={onStart}>PLAY</button>
       </div>

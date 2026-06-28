@@ -1,7 +1,7 @@
 // loop.ts — the client render-loop core, kept pure so it is unit-testable and so
 // the input log it records replays to the identical score on the server. The
 // React layer only calls advance() from rAF and reads state to draw.
-import { createState, setDir, step, type Dir, type Input, type State } from "@nokiadot/engine";
+import { createState, setDir, step, type Dir, type Input, type State } from "@buga/engine";
 
 export const MS_PER_TICK_BASE = 120;
 export const MS_PER_TICK_FLOOR = 80;

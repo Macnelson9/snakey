@@ -11,7 +11,7 @@ import {
   createState, setDir, step, simulate,
   DX, DY, OPPOSITE,
   type State, type Dir, type Input,
-} from "@nokiadot/engine";
+} from "@buga/engine";
 import { createMemoryStore } from "./session/memory-store.ts";
 import { createFakeVerifier } from "./identity/fake-verifier.ts";
 import { recoverVoucherSigner } from "./voucher.ts";

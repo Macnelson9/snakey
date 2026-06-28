@@ -17,7 +17,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@nokiadot/engine':
+      '@buga/engine':
         specifier: workspace:*
         version: link:../../packages/engine
       '@upstash/redis':

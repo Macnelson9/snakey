@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { RegisterSW } from "@/components/RegisterSW";
 
 export const metadata: Metadata = {
-  title: "Nokiadot",
-  description: "Nostalgic Snake on Celo. Play instantly, earn G$.",
+  title: "Buga",
+  description: "The Nokia snake, now on Celo. Play instantly, earn G$.",
 };
 
 export const viewport: Viewport = {

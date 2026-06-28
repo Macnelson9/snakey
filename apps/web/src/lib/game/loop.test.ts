@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { simulate, type Dir } from "@nokiadot/engine";
+import { simulate, type Dir } from "@buga/engine";
 import { msPerTick, createRunController, MS_PER_TICK_BASE, MS_PER_TICK_FLOOR } from "./loop.ts";
 
 test("msPerTick ramps from base toward the floor and never below", () => {

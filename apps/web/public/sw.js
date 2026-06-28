@@ -1,4 +1,4 @@
-const CACHE = "nokiadot-shell-v1";
+const CACHE = "buga-shell-v1";
 const SHELL = ["/"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

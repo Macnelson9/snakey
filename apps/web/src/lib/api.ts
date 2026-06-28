@@ -4,7 +4,7 @@
 // string so JSON.stringify succeeds and the client gets exact, contract-ready
 // values.
 import type { Address, Hex } from "viem";
-import type { Input } from "@nokiadot/engine";
+import type { Input } from "@buga/engine";
 import type { SessionRecord } from "./session/store.ts";
 import type { NoRewardReason, RejectReason, SettleResult } from "./settle.ts";
 

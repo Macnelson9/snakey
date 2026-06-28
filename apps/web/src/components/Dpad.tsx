@@ -1,4 +1,4 @@
-import type { Dir } from "@nokiadot/engine";
+import type { Dir } from "@buga/engine";
 
 export function Dpad({ onDir }: { onDir: (d: Dir) => void }) {
   return (

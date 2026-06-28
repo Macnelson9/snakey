@@ -1,13 +1,13 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Dir, State } from "@nokiadot/engine";
+import type { Dir, State } from "@buga/engine";
 import { createRunController, type RunController } from "@/lib/game/loop.ts";
 import { keyToDir } from "@/lib/game/input.ts";
 import { createSession, submitRun, PLACEHOLDER_PLAYER, type SettleResponse } from "@/lib/client/api.ts";
 import { createSfx } from "@/lib/audio/sfx.ts";
 import { usePreferences } from "./PreferencesProvider.tsx";
 
-const HI_KEY = "nokiadot.hi";
+const HI_KEY = "buga.hi";
 type Phase = "idle" | "playing" | "gameover";
 
 export function useGame() {

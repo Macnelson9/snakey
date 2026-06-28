@@ -2,7 +2,7 @@ export function Hud({ score, hi, onOpenSettings }: { score: number; hi: number; 
   return (
     <>
       <div className="hud">
-        <span className="wordmark">NOKIADOT</span>
+        <span className="wordmark">BUGA</span>
         <div className="hud-right">
           <button className="theme-btn" aria-label="Settings" onClick={onOpenSettings} />
         </div>

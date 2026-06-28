@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { createState, type State } from "@nokiadot/engine";
+import { createState, type State } from "@buga/engine";
 import { PreferencesProvider, usePreferences } from "@/components/PreferencesProvider.tsx";
 import { THEMES, themeVars } from "@/lib/ui/themes.ts";
 import { swipeToDir } from "@/lib/game/input.ts";

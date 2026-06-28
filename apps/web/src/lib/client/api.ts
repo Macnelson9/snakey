@@ -2,7 +2,7 @@
 // injectable so request shaping is unit-testable. The player address is a
 // TEMP placeholder until sub-project B supplies a real Privy wallet.
 import type { Address } from "viem";
-import type { Input } from "@nokiadot/engine";
+import type { Input } from "@buga/engine";
 
 // TEMP: replaced by the Privy player address in sub-project B.
 export const PLACEHOLDER_PLAYER = "0x000000000000000000000000000000000000dEaD" as Address;

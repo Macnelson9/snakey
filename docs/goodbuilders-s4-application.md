@@ -6,23 +6,23 @@
 
 ## Project Information
 
-| Field | Value |
-|---|---|
-| **Project Name** | Buga |
-| **Manager Addresses** | `[FILL: your Celo/ETH wallet address(es)]` |
-| **Website** | `[FILL: Vercel deployment URL once live]` |
-| **Demo URL** | `[FILL: same as website once deployed]` |
-| **X/Twitter** | `[FILL: your handle]` |
-| **Farcaster** | `[FILL: your handle, or leave blank]` |
-| **Telegram** | `[FILL: project group URL, or leave blank]` |
-| **Discord** | `[FILL: channel URL, or leave blank]` |
-| **GitHub Repos** | `https://github.com/Macnelson9/snakey` |
-| **Smart Contracts** | `0xEF900faE89Eb044d702efe4Aad936216CebbAac2` — Celo mainnet (GameRewards) |
-| **Wallet to receive funding** | `[FILL: your Celo wallet address]` |
+| Field                         | Value                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| **Project Name**              | Buga                                                                      |
+| **Manager Addresses**         | `[FILL: your Celo/ETH wallet address(es)]`                                |
+| **Website**                   | `[FILL: Vercel deployment URL once live]`                                 |
+| **Demo URL**                  | `[FILL: same as website once deployed]`                                   |
+| **X/Twitter**                 | `[FILL: your handle]`                                                     |
+| **Farcaster**                 | `[FILL: your handle, or leave blank]`                                     |
+| **Telegram**                  | `[FILL: project group URL, or leave blank]`                               |
+| **Discord**                   | `[FILL: channel URL, or leave blank]`                                     |
+| **GitHub Repos**              | `https://github.com/Macnelson9/buga`                                      |
+| **Smart Contracts**           | `0xEF900faE89Eb044d702efe4Aad936216CebbAac2` — Celo mainnet (GameRewards) |
+| **Wallet to receive funding** | `[FILL: your Celo wallet address]`                                        |
 
 ### Description
 
-> **Buga** (Hausa: *to play*) — the Nokia Xenzia snake game, reimagined as a reward-bearing Progressive Web App on Celo.
+> **Buga** (Hausa: _to play_) — the Nokia Xenzia snake game, reimagined as a reward-bearing Progressive Web App on Celo.
 
 Buga is an open-source, browser-native retro arcade platform built on the Celo blockchain. Players earn **G$ (GoodDollar tokens)** for verified gameplay — no app download, no signup, just open and play. The game faithfully recreates the classic Nokia Xenzia experience with a dot-matrix LCD aesthetic, 8 selectable themes, D-pad and swipe controls, and a Web Audio sound engine tuned to the original's feel.
 
@@ -40,85 +40,85 @@ Buga is named in honor of the Nokia phone's outsized cultural legacy in West Afr
 
 ### 1. Previous Participation
 
-| # | Question | Answer |
-|---|---|---|
-| 1.1 | Have you participated in GoodBuilders before? | No |
-| 1.2 | Number of seasons | 0 |
-| 1.3 | Previous Karma Updates | N/A |
+| #   | Question                                        | Answer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1 | Have you participated in GoodBuilders before?   | No                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 1.2 | Number of seasons                               | 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 1.3 | Previous Karma Updates                          | N/A                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 1.4 | What's the current state of your project today? | Smart contract (`GameRewards.sol`) is deployed and live on **Celo mainnet** (`0xEF900faE89Eb044d702efe4Aad936216CebbAac2`) with a 100 G$ reward pool seeded. The full score-integrity backend is built and tested: server-side session + settle endpoints, GoodDollar identity gate (on-chain `getWhitelistedRoot` call), EIP-712 voucher signing, Upstash Redis session store with Lua-atomic daily caps. The playable PWA is complete: deterministic engine, 8 LCD themes, swipe/D-pad/keyboard input, Web Audio SFX, offline cache, installable PWA shell. Privy wallet integration and the in-app G$ claim flow are in active development (the remaining gap to full end-to-end). Async multiplayer + leaderboards are designed and spec'd. |
 
 ### 2. Maturity & Usage
 
-| # | Question | Answer |
-|---|---|---|
-| 2.1 | Project Stage | MVP — mainnet contract deployed, app pre-launch |
-| 2.2 | Lifetime Users | 0 (pre-launch) |
-| 2.3 | Active Users | 0 |
-| 2.4 | Active Users Frequency | N/A |
+| #   | Question                  | Answer                                                                                                                                                                                                            |
+| --- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2.1 | Project Stage             | MVP — mainnet contract deployed, app pre-launch                                                                                                                                                                   |
+| 2.2 | Lifetime Users            | 0 (pre-launch)                                                                                                                                                                                                    |
+| 2.3 | Active Users              | 0                                                                                                                                                                                                                 |
+| 2.4 | Active Users Frequency    | N/A                                                                                                                                                                                                               |
 | 2.5 | Other relevant usage data | Contract verified on Celo Explorer. 100 G$ in reward pool. Full test suite: 16 Foundry contract tests (happy path, replay guard, expiry, bad signer, epoch cap, fuzz) + 30+ Node.js unit tests for backend logic. |
 
 ### 3. Integration
 
-| # | Question | Answer |
-|---|---|---|
-| 3.1 | G$ Integration Status | Live on mainnet |
-| 3.2 | Integration Type | Reward distribution; Identity / verification gating |
+| #   | Question                                      | Answer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3.1 | G$ Integration Status                         | Live on mainnet                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 3.2 | Integration Type                              | Reward distribution; Identity / verification gating                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | 3.3 | Describe your G$ integration & why it matters | Buga rewards GoodDollar-verified humans with G$ for playing the snake game — the server validates every run's score integrity server-side and signs reward vouchers only for addresses that pass the GoodDollar Identity on-chain check, then auto-redeems via the `GameRewards` contract so G$ lands directly in the player's wallet. GoodDollar identity is the gate to real rewards, which means every Buga session is a live proof-of-human interaction and a tangible reason for new users to complete GoodDollar face-verification. |
 
 ### 4. What you'll build
 
-| # | Question | Answer |
-|---|---|---|
-| 4.1 | Primary Build Goal | Ship Buga publicly on Celo with Privy embedded wallets, G$ auto-claim, and async multiplayer leaderboards — creating the first GoodDollar-rewarded retro arcade game. |
-| 4.2 | Build Milestones | **M1 (this grant period):** Privy silent embedded wallet integration → replace placeholder player address with a real per-device wallet; server-relay G$ redemption (server calls `GameRewards.redeem()` after settle, returns tx hash to UI; zero gas friction for player). **M2:** Async same-seed multiplayer — private room codes + daily global challenge; per-player handles; leaderboards in Redis (daily / room / global). **M3:** Public launch on Vercel + PWA install prompt + social sharing (score cards). **M4 (stretch):** Second retro game (Tetris) using the same engine + reward infrastructure. |
-| 4.3 | Ecosystem Impact | Buga creates a fun, low-friction on-ramp: playing a nostalgic game anyone recognises is a compelling, non-technical reason to get GoodDollar-verified for the first time. Multiplayer leaderboards build social proof and repeat engagement around the protocol. |
+| #   | Question           | Answer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 4.1 | Primary Build Goal | Ship Buga publicly on Celo with Privy embedded wallets, G$ auto-claim, and async multiplayer leaderboards — creating the first GoodDollar-rewarded retro arcade game.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 4.2 | Build Milestones   | **M1 (this grant period):** Privy silent embedded wallet integration → replace placeholder player address with a real per-device wallet; server-relay G$ redemption (server calls `GameRewards.redeem()` after settle, returns tx hash to UI; zero gas friction for player). **M2:** Async same-seed multiplayer — private room codes + daily global challenge; per-player handles; leaderboards in Redis (daily / room / global). **M3:** Public launch on Vercel + PWA install prompt + social sharing (score cards). **M4 (stretch):** Second retro game (Tetris) using the same engine + reward infrastructure. |
+| 4.3 | Ecosystem Impact   | Buga creates a fun, low-friction on-ramp: playing a nostalgic game anyone recognises is a compelling, non-technical reason to get GoodDollar-verified for the first time. Multiplayer leaderboards build social proof and repeat engagement around the protocol.                                                                                                                                                                                                                                                                                                                                                    |
 
 ### 5. How you'll grow
 
-| # | Question | Answer |
-|---|---|---|
-| 5.1 | Primary Growth Goal | Reach 1,000 monthly active GoodDollar-verified players within 3 months of public launch via viral nostalgia sharing and leaderboard competition. |
+| #   | Question                                   | Answer                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.1 | Primary Growth Goal                        | Reach 1,000 monthly active GoodDollar-verified players within 3 months of public launch via viral nostalgia sharing and leaderboard competition.                                                                                                                                                                                                                                                                                                                     |
 | 5.2 | Target Users, Communities, and/or Partners | **Users:** GoodDollar-verified humans in Nigeria, Kenya, Ghana, and other Nokia-legacy markets where Xenzia is deeply nostalgic; Web3-native players interested in skill-based earning. **Communities:** GoodDollar Telegram/Discord communities; Celo ecosystem projects; African Web3 builder communities (e.g. Afro Degens, Web3 Africa). **Partners:** GoodDollar for co-promotion; Celo Foundation for ecosystem visibility; Privy for embedded wallet support. |
-| 5.3 | Growth Milestones | **Month 1:** Public launch + 100 verified players; share-a-score card feature for organic Twitter/Farcaster spread. **Month 2:** Multiplayer + leaderboards live; daily challenge creates daily return habit; 500 players. **Month 3:** Second game (Tetris); 1,000 players; begin tracking G$ earned per player as an engagement KPI. |
-| 5.4 | Ecosystem Impact | Each Buga player who wasn't previously GoodDollar-verified is a net new verified human in the ecosystem. Retro arcade games with real stakes have demonstrated outsized viral sharing in emerging markets — Buga's leaderboard dynamic multiplies this. |
+| 5.3 | Growth Milestones                          | **Month 1:** Public launch + 100 verified players; share-a-score card feature for organic Twitter/Farcaster spread. **Month 2:** Multiplayer + leaderboards live; daily challenge creates daily return habit; 500 players. **Month 3:** Second game (Tetris); 1,000 players; begin tracking G$ earned per player as an engagement KPI.                                                                                                                               |
+| 5.4 | Ecosystem Impact                           | Each Buga player who wasn't previously GoodDollar-verified is a net new verified human in the ecosystem. Retro arcade games with real stakes have demonstrated outsized viral sharing in emerging markets — Buga's leaderboard dynamic multiplies this.                                                                                                                                                                                                              |
 
 ### 6. Team
 
-| # | Question | Answer |
-|---|---|---|
-| 6.1 | Primary Contact Name | `[FILL: your full name]` |
-| 6.2 | Primary Contact Role Description | Founder and sole developer — designed and built the full stack: EVM smart contract (Solidity + Foundry), score-integrity backend (Next.js route handlers, Upstash Redis, EIP-712 signing, GoodDollar identity gate), deterministic game engine (TypeScript), and PWA front-end (React 19, CSS dot-matrix themes, Web Audio). |
-| 6.3 | Primary Contact Telegram | `[FILL: your Telegram handle]` |
-| 6.4 | Primary Contact GitHub or LinkedIn | `https://github.com/Macnelson9` |
-| 6.5 | Additional Teammates | None at this time. Open to collaborators on art / additional game engines. |
+| #   | Question                           | Answer                                                                                                                                                                                                                                                                                                                       |
+| --- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 6.1 | Primary Contact Name               | `[FILL: your full name]`                                                                                                                                                                                                                                                                                                     |
+| 6.2 | Primary Contact Role Description   | Founder and sole developer — designed and built the full stack: EVM smart contract (Solidity + Foundry), score-integrity backend (Next.js route handlers, Upstash Redis, EIP-712 signing, GoodDollar identity gate), deterministic game engine (TypeScript), and PWA front-end (React 19, CSS dot-matrix themes, Web Audio). |
+| 6.3 | Primary Contact Telegram           | `[FILL: your Telegram handle]`                                                                                                                                                                                                                                                                                               |
+| 6.4 | Primary Contact GitHub or LinkedIn | `https://github.com/Macnelson9`                                                                                                                                                                                                                                                                                              |
+| 6.5 | Additional Teammates               | None at this time. Open to collaborators on art / additional game engines.                                                                                                                                                                                                                                                   |
 
 ### 7. Additional
 
-| # | Question | Answer |
-|---|---|---|
-| 7.1 | Additional comments | The name "Buga" comes from Hausa (one of West Africa's most widely spoken languages) and means *to play* — a deliberate nod to the Nokia phone's cultural legacy in African markets where the Xenzia snake game was often people's first gaming experience. The app is built to be low-data, offline-capable, and installable as a PWA so it works well on the devices and connectivity common in those markets. All source code is open-source on GitHub. |
-| 7.2 | How did you hear about GoodBuilders? | `[FILL: e.g. GoodDollar Telegram, Twitter, a friend, etc.]` |
+| #   | Question                             | Answer                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7.1 | Additional comments                  | The name "Buga" comes from Hausa (one of West Africa's most widely spoken languages) and means _to play_ — a deliberate nod to the Nokia phone's cultural legacy in African markets where the Xenzia snake game was often people's first gaming experience. The app is built to be low-data, offline-capable, and installable as a PWA so it works well on the devices and connectivity common in those markets. All source code is open-source on GitHub. |
+| 7.2 | How did you hear about GoodBuilders? | `[FILL: e.g. GoodDollar Telegram, Twitter, a friend, etc.]`                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ---
 
 ## Attestation
 
-| # | Field | Answer |
-|---|---|---|
-| 1.1 | I agree to post progress updates, join Demo Days, join office hours and 1:1s, share KPI data, communicate in program channels, and provide feedback. | ✅ Yes |
-| 2.1 | Recipient Type | `[FILL: Individual or Company]` |
-| 2.2 | Legal Name / Company Name | `[FILL]` |
-| 2.3 | Country of residence / registration | `[FILL]` |
-| 2.4 | Address | `[FILL]` |
-| 2.5 | Contact Email | `[FILL]` |
-| 3.1 | I consent to the collection and use of my data for the purposes of participating in the GoodBuilders program and receiving a grant via the Flow State platform. | ✅ Yes |
-| 4.1 | I acknowledge and agree to the public accountability, on-chain records, strategic use of data, confidentiality, analytics, and marketing terms. | ✅ Yes |
+| #   | Field                                                                                                                                                           | Answer                          |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| 1.1 | I agree to post progress updates, join Demo Days, join office hours and 1:1s, share KPI data, communicate in program channels, and provide feedback.            | ✅ Yes                          |
+| 2.1 | Recipient Type                                                                                                                                                  | `[FILL: Individual or Company]` |
+| 2.2 | Legal Name / Company Name                                                                                                                                       | `[FILL]`                        |
+| 2.3 | Country of residence / registration                                                                                                                             | `[FILL]`                        |
+| 2.4 | Address                                                                                                                                                         | `[FILL]`                        |
+| 2.5 | Contact Email                                                                                                                                                   | `[FILL]`                        |
+| 3.1 | I consent to the collection and use of my data for the purposes of participating in the GoodBuilders program and receiving a grant via the Flow State platform. | ✅ Yes                          |
+| 4.1 | I acknowledge and agree to the public accountability, on-chain records, strategic use of data, confidentiality, analytics, and marketing terms.                 | ✅ Yes                          |
 
 ---
 
 ## Assets
 
-| Asset | File |
-|---|---|
-| Logo (1:1) | `apps/web/public/buga-logo.svg` |
+| Asset        | File                              |
+| ------------ | --------------------------------- |
+| Logo (1:1)   | `apps/web/public/buga-logo.svg`   |
 | Banner (3:1) | `apps/web/public/buga-banner.svg` |

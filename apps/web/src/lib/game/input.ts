@@ -1,6 +1,6 @@
 // input.ts — map raw gestures/keys to an engine Dir. The 180°-reversal guard is
 // NOT here: the engine's setDir already rejects reversals (single source of truth).
-import type { Dir } from "@nokiadot/engine";
+import type { Dir } from "@buga/engine";
 
 /** Dominant-axis swipe → Dir, or null below the distance threshold. */
 export function swipeToDir(dx: number, dy: number, minSwipePx = 24): Dir | null {
