@@ -1,0 +1,63 @@
+<svg viewBox="0 0 1512 504" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1512" height="504" fill="#0c1a0c"/>
+
+  <!-- Subtle left-edge glow -->
+  <radialGradient id="lg" cx="0" cy="50%" r="60%">
+    <stop offset="0%"   stop-color="#1a3a0c" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#0c1a0c" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1512" height="504" fill="url(#lg)"/>
+
+  <!-- ── Snake illustration (left third) ── -->
+  <!-- Body: 4 right + 1 down corner + head right -->
+  <rect x="72"  y="148" width="52" height="52" rx="9" fill="#4a6820"/>
+  <rect x="136" y="148" width="52" height="52" rx="9" fill="#5c7e28"/>
+  <rect x="200" y="148" width="52" height="52" rx="9" fill="#6e9430"/>
+  <rect x="264" y="148" width="52" height="52" rx="9" fill="#80aa38"/>
+  <rect x="264" y="212" width="52" height="52" rx="9" fill="#8bac0f"/>
+  <!-- Head -->
+  <rect x="328" y="212" width="52" height="52" rx="9" fill="#9dc445"/>
+  <!-- Eyes -->
+  <circle cx="368" cy="228" r="5.5" fill="#0c1a0c"/>
+  <circle cx="368" cy="249" r="5.5" fill="#0c1a0c"/>
+  <!-- Food -->
+  <circle cx="436" cy="238" r="24" fill="#c4d980"/>
+  <circle cx="427" cy="229" r="7"  fill="#dbe99a" opacity="0.6"/>
+
+  <!-- ── Center: wordmark ── -->
+  <text
+    x="840" y="280"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="148"
+    font-weight="900"
+    letter-spacing="20"
+    fill="#9dc445">BUGA</text>
+
+  <!-- ── Right: taglines ── -->
+  <text
+    x="1300" y="226"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="30"
+    letter-spacing="4"
+    fill="#8bac0f">The Nokia snake,</text>
+  <text
+    x="1300" y="268"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="30"
+    letter-spacing="4"
+    fill="#8bac0f">now on Celo.</text>
+  <text
+    x="1300" y="326"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="22"
+    letter-spacing="3"
+    fill="#4a6820">Play · Verify · Earn G$</text>
+
+  <!-- Thin bottom rule -->
+  <rect x="72" y="466" width="1368" height="2" rx="1" fill="#1a3a0c"/>
+</svg>

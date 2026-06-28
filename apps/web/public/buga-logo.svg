@@ -1,0 +1,41 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Nokia-dark LCD background -->
+  <rect width="512" height="512" rx="88" fill="#0c1a0c"/>
+
+  <!-- Snake body — hook: right × 4, then down × 1, then right (head) -->
+  <!-- Tail (darkest) → Head (brightest) -->
+  <rect x="76"  y="126" width="50" height="50" rx="9" fill="#4a6820"/>
+  <rect x="138" y="126" width="50" height="50" rx="9" fill="#5c7e28"/>
+  <rect x="200" y="126" width="50" height="50" rx="9" fill="#6e9430"/>
+  <rect x="262" y="126" width="50" height="50" rx="9" fill="#80aa38"/>
+  <rect x="262" y="188" width="50" height="50" rx="9" fill="#8bac0f"/>
+  <!-- Head — brightest, facing right -->
+  <rect x="324" y="188" width="50" height="50" rx="9" fill="#9dc445"/>
+
+  <!-- Eyes: right side of head, pointing right -->
+  <circle cx="362" cy="203" r="5" fill="#0c1a0c"/>
+  <circle cx="362" cy="223" r="5" fill="#0c1a0c"/>
+
+  <!-- Food dot (ahead of head) -->
+  <circle cx="420" cy="213" r="21" fill="#c4d980"/>
+  <circle cx="412" cy="205" r="6"  fill="#dbe99a" opacity="0.65"/>
+
+  <!-- BUGA wordmark -->
+  <text
+    x="256" y="340"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="84"
+    font-weight="900"
+    letter-spacing="14"
+    fill="#9dc445">BUGA</text>
+
+  <!-- Tagline -->
+  <text
+    x="256" y="382"
+    text-anchor="middle"
+    font-family="'Courier New', Courier, monospace"
+    font-size="18"
+    letter-spacing="5"
+    fill="#4a6820">PLAY · VERIFY · EARN G$</text>
+</svg>
