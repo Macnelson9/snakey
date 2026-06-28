@@ -1,7 +1,7 @@
 import type { SettleResponse } from "@/lib/client/api.ts";
 
 function gd(amountWei: string): string {
-  // 18-decimal wei -> short G$ string, integer math so no float drift.
+  // 18-decimal wei → short G$ string, integer math so no float drift.
   const w = BigInt(amountWei);
   const whole = w / 10n ** 18n;
   const frac = (w % 10n ** 18n) / 10n ** 16n; // 2 dp
@@ -9,32 +9,106 @@ function gd(amountWei: string): string {
 }
 
 export function GameOverlay({
-  phase, result, practice, onStart,
-}: { phase: "idle" | "gameover"; result: SettleResponse | null; practice: boolean; onStart: () => void }) {
+  phase,
+  result,
+  practice,
+  settling,
+  hasWallet,
+  onStart,
+  onLogin,
+}: {
+  phase: "idle" | "gameover";
+  result: SettleResponse | null;
+  practice: boolean;
+  settling: boolean;
+  hasWallet: boolean;
+  onStart: () => void;
+  onLogin: () => void;
+}) {
   if (phase === "idle") {
     return (
       <div className="overlay">
         <div className="wordmark" style={{ fontSize: 22 }}>BUGA</div>
-        <p style={{ fontSize: 12, opacity: .8 }}>swipe / arrows to steer · eat the dot</p>
+        <p style={{ fontSize: 12, opacity: 0.8 }}>swipe / arrows to steer · eat the dot</p>
+        {!hasWallet && (
+          <p style={{ fontSize: 11, opacity: 0.6, margin: "4px 0" }}>
+            <button className="btn-link" onClick={onLogin}>Connect wallet</button>
+            {" "}to earn G$
+          </p>
+        )}
         <button className="btn" onClick={onStart}>PLAY</button>
       </div>
     );
   }
+
   return (
     <div className="overlay">
       <div style={{ fontSize: 14, letterSpacing: ".1em" }}>GAME OVER</div>
-      {result?.status === "accepted" && (
-        <div><div style={{ fontSize: 28 }}>{result.score}</div><div style={{ fontSize: 12 }}>earned {gd(result.amount)} G$</div></div>
+
+      {settling && (
+        <div style={{ fontSize: 12, opacity: 0.8, margin: "8px 0" }}>claiming G$…</div>
       )}
-      {result?.status === "no_reward" && (
-        <div><div style={{ fontSize: 28 }}>{result.score}</div><div style={{ fontSize: 12 }}>{
-          result.reason === "below_bar" ? "below the reward bar" :
-          result.reason === "not_verified" ? "verify to earn (later)" : "daily cap reached"
-        }</div></div>
+
+      {!settling && result?.status === "accepted" && (
+        <div>
+          <div style={{ fontSize: 28 }}>{result.score}</div>
+          <div style={{ fontSize: 12 }}>earned {gd(result.amount)} G$</div>
+          {result.txHash && (
+            <a
+              href={`https://celoscan.io/tx/${result.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ fontSize: 11, opacity: 0.7, display: "block", marginTop: 4 }}
+            >
+              view on Celoscan ↗
+            </a>
+          )}
+        </div>
       )}
-      {result?.status === "rejected" && <div style={{ fontSize: 12 }}>run not counted: {result.reason}</div>}
-      {practice && <div style={{ fontSize: 11, opacity: .7 }}>practice mode — offline</div>}
-      <button className="btn" onClick={onStart}>PLAY AGAIN</button>
+
+      {!settling && result?.status === "no_reward" && (
+        <div>
+          <div style={{ fontSize: 28 }}>{result.score}</div>
+          <div style={{ fontSize: 12 }}>
+            {result.reason === "below_bar" && "below the reward bar"}
+            {result.reason === "cap_reached" && "daily cap reached"}
+            {result.reason === "not_verified" && (
+              <>
+                verify to earn G${" "}
+                <a
+                  href="https://wallet.gooddollar.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ opacity: 0.8 }}
+                >
+                  get verified ↗
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {!settling && result?.status === "rejected" && (
+        <div style={{ fontSize: 12 }}>run not counted: {result.reason}</div>
+      )}
+
+      {practice && (
+        <div style={{ fontSize: 11, opacity: 0.7, marginTop: 4 }}>
+          {!hasWallet ? (
+            <>
+              <button className="btn-link" onClick={onLogin}>connect wallet</button>
+              {" "}to earn G$
+            </>
+          ) : (
+            "practice mode — offline"
+          )}
+        </div>
+      )}
+
+      <button className="btn" onClick={onStart} disabled={settling}>
+        {settling ? "…" : "PLAY AGAIN"}
+      </button>
     </div>
   );
 }
