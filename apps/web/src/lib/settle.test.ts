@@ -17,6 +17,7 @@ import { createFakeVerifier } from "./identity/fake-verifier.ts";
 import { recoverVoucherSigner } from "./voucher.ts";
 import { rewardForScore, REWARD_PARAMS, G$ } from "./reward.ts";
 import { settle, type SettleParams } from "./settle.ts";
+import type { Relayer } from "./relayer.ts";
 
 const SCORER_PK = "0xac0974bec39a17e36ba4a6b4d238ff944b6b0be62e1b6b5a3f6e1e9f6c8b6a1e" as const;
 const PLAYER = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8" as const;
@@ -258,6 +259,35 @@ test("two wallets sharing one GoodDollar root share the daily cap", async () => 
   const rB = await settle(params, { runId: sB.runId, inputs: logB.inputs });
   assert.equal(rB.status, "no_reward");
   if (rB.status === "no_reward") assert.equal(rB.reason, "cap_reached");
+});
+
+test("relay: accepted result carries txHash from the relayer", async () => {
+  const fakeRelayer: Relayer = {
+    redeem: async () => "0xdeadbeef0000000000000000000000000000000000000000000000000000cafe" as `0x${string}`,
+  };
+  const { store, params, clock } = harness({ relayer: fakeRelayer });
+  const session = await issue(store);
+  const log = greedyLog(session.seed);
+  clock.advance(log.ticks * params.minMsPerTick + 5_000);
+  const res = await settle(params, { runId: session.runId, inputs: log.inputs });
+  assert.equal(res.status, "accepted");
+  if (res.status !== "accepted") return;
+  assert.equal(res.txHash, "0xdeadbeef0000000000000000000000000000000000000000000000000000cafe");
+});
+
+test("relay: settle still returns accepted when relayer throws (graceful fallback)", async () => {
+  const failingRelayer: Relayer = {
+    redeem: async () => { throw new Error("network error"); },
+  };
+  const { store, params, clock } = harness({ relayer: failingRelayer });
+  const session = await issue(store);
+  const log = greedyLog(session.seed);
+  clock.advance(log.ticks * params.minMsPerTick + 5_000);
+  // Must not throw — relay errors are caught and logged, not propagated.
+  const res = await settle(params, { runId: session.runId, inputs: log.inputs });
+  assert.equal(res.status, "accepted");
+  if (res.status !== "accepted") return;
+  assert.equal(res.txHash, undefined, "txHash absent when relay failed");
 });
 
 test("a below-bar run never consults the identity verifier (no wasted RPC)", async () => {
