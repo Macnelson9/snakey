@@ -78,6 +78,7 @@ export type SerializedSettle =
       signer: string;
       signature: string;
       voucher: SerializedVoucher;
+      txHash?: string;
     }
   | {
       status: "no_reward";
@@ -108,6 +109,7 @@ export function serializeSettle(res: SettleResult): SerializedSettle {
           amount: res.signed.voucher.amount.toString(),
           deadline: res.signed.voucher.deadline.toString(),
         },
+        txHash: res.txHash,
       };
     case "no_reward":
       return {

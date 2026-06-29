@@ -3,9 +3,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Dir, State } from "@buga/engine";
 import { createRunController, type RunController } from "@/lib/game/loop.ts";
 import { keyToDir } from "@/lib/game/input.ts";
-import { createSession, submitRun, PLACEHOLDER_PLAYER, type SettleResponse } from "@/lib/client/api.ts";
+import { createSession, submitRun, type SettleResponse } from "@/lib/client/api.ts";
 import { createSfx } from "@/lib/audio/sfx.ts";
 import { usePreferences } from "./PreferencesProvider.tsx";
+import { usePlayerWallet } from "./PrivyWalletProvider.tsx";
 
 const HI_KEY = "buga.hi";
 type Phase = "idle" | "playing" | "gameover";
@@ -15,10 +16,13 @@ export function useGame() {
   const sfx = useMemo(() => createSfx(prefs.sound), []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { sfx.setEnabled(prefs.sound); }, [prefs.sound, sfx]);
 
+  const { address, login } = usePlayerWallet();
+
   const [phase, setPhase] = useState<Phase>("idle");
   const [, force] = useState(0);
   const [result, setResult] = useState<SettleResponse | null>(null);
   const [practice, setPractice] = useState(false);
+  const [settling, setSettling] = useState(false);
   const [hi, setHi] = useState(0);
   useEffect(() => { setHi(Number(localStorage.getItem(HI_KEY) ?? 0) || 0); }, []);
 
@@ -36,12 +40,19 @@ export function useGame() {
     if (practice || !runId.current) {
       setResult({ status: "no_reward", reason: "below_bar", score: c.state.score, ticks: c.state.tick, amount: "0" });
     } else {
+      setSettling(true);
       try {
         const r = await submitRun(runId.current, c.inputs);
         setResult(r);
-        if (r.status === "accepted" && r.score > hi) { setHi(r.score); localStorage.setItem(HI_KEY, String(r.score)); sfx.play("highscore"); }
+        if (r.status === "accepted" && r.score > hi) {
+          setHi(r.score);
+          localStorage.setItem(HI_KEY, String(r.score));
+          sfx.play("highscore");
+        }
       } catch {
         setResult({ status: "rejected", reason: "unknown_session" });
+      } finally {
+        setSettling(false);
       }
     }
   }, [practice, hi, sfx]);
@@ -63,16 +74,28 @@ export function useGame() {
     sfx.unlock(); sfx.play("start");
     setResult(null);
     let seed: number;
-    if (typeof navigator !== "undefined" && navigator.onLine) {
-      try { const s = await createSession(PLACEHOLDER_PLAYER); seed = s.seed; runId.current = s.runId; setPractice(false); }
-      catch { seed = (Math.random() * 0xffffffff) >>> 0; runId.current = null; setPractice(true); }
-    } else { seed = (Math.random() * 0xffffffff) >>> 0; runId.current = null; setPractice(true); }
+    if (address && typeof navigator !== "undefined" && navigator.onLine) {
+      try {
+        const s = await createSession(address);
+        seed = s.seed;
+        runId.current = s.runId;
+        setPractice(false);
+      } catch {
+        seed = (Math.random() * 0xffffffff) >>> 0;
+        runId.current = null;
+        setPractice(true);
+      }
+    } else {
+      seed = (Math.random() * 0xffffffff) >>> 0;
+      runId.current = null;
+      setPractice(true);
+    }
     ctl.current = createRunController(seed);
     setPhase("playing");
     last.current = performance.now();
     raf.current = requestAnimationFrame(tick);
     starting.current = false;
-  }, [sfx, tick]);
+  }, [sfx, tick, address]);
 
   const queueDir = useCallback((d: Dir) => { ctl.current?.queueDir(d); }, []);
 
@@ -85,5 +108,10 @@ export function useGame() {
   useEffect(() => () => { if (raf.current) cancelAnimationFrame(raf.current); }, []);
 
   const state: State | null = ctl.current?.state ?? null;
-  return { phase, state, liveScore: state?.score ?? 0, hi, result, practice, start, queueDir };
+  return {
+    phase, state, liveScore: state?.score ?? 0, hi,
+    result, practice, settling,
+    hasWallet: address !== null,
+    start, queueDir, login,
+  };
 }

@@ -5,8 +5,9 @@
 // voucher. The request body carries (runId, inputs) and nothing else: there is
 // deliberately no field in which a client could assert a score.
 import { simulate, MAX_TICKS, type Input } from "@buga/engine";
-import type { Hex } from "viem";
+import type { Address, Hex } from "viem";
 import type { SessionStore } from "./session/store.ts";
+import type { Relayer } from "./relayer.ts";
 import { rewardForScore, REWARD_PARAMS, type RewardParams } from "./reward.ts";
 import { signVoucher, type SignedVoucher, type VoucherContext } from "./voucher.ts";
 import type { IdentityVerifier } from "./identity/verifier.ts";
@@ -24,6 +25,9 @@ export interface SettleParams {
   minMsPerTick: number;
   /** How long a signed voucher stays redeemable, in ms. */
   voucherTtlMs: number;
+  /** Server-side WalletClient that submits GameRewards.redeem() after signing.
+   *  If absent, the signed voucher is returned without relay. */
+  relayer?: Relayer;
   rewardParams?: RewardParams;
   /** Inputs-per-tick ratio above which a run is flagged (not blocked) for review. */
   maxInputRatio?: number;
@@ -55,6 +59,7 @@ export type SettleResult =
       flagged: boolean;
       flags: string[];
       signed: SignedVoucher;
+      txHash?: `0x${string}`;
     }
   | {
       status: "no_reward";
@@ -151,6 +156,20 @@ export async function settle(p: SettleParams, req: SettleRequest): Promise<Settl
     p.voucherContext,
   );
 
+  let txHash: `0x${string}` | undefined;
+  if (p.relayer) {
+    try {
+      txHash = await p.relayer.redeem(
+        signed.voucher,
+        signed.signature,
+        p.voucherContext.verifyingContract as Address,
+      );
+    } catch (err) {
+      console.error("[settle] relay redeem failed:", err);
+      // Non-blocking: the signed voucher is still valid; client can retry later.
+    }
+  }
+
   return {
     status: "accepted",
     score: result.score,
@@ -161,5 +180,6 @@ export async function settle(p: SettleParams, req: SettleRequest): Promise<Settl
     flagged,
     flags,
     signed,
+    txHash,
   };
 }

@@ -38,7 +38,15 @@ function Screen() {
         >
           <Board state={shown} />
           {game.phase !== "playing" && (
-            <GameOverlay phase={game.phase === "idle" ? "idle" : "gameover"} result={game.result} practice={game.practice} onStart={game.start} />
+            <GameOverlay
+              phase={game.phase === "idle" ? "idle" : "gameover"}
+              result={game.result}
+              practice={game.practice}
+              settling={game.settling}
+              hasWallet={game.hasWallet}
+              onStart={game.start}
+              onLogin={game.login}
+            />
           )}
         </div>
         <div className="controls">{prefs.showDpad && <Dpad onDir={game.queueDir} />}</div>

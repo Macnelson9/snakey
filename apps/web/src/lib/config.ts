@@ -4,6 +4,7 @@
 // dev. Secrets required only by /settle (the scorer key, the rewards contract)
 // are validated lazily so /session works without them in development.
 import { http, type Address, type Hex } from "viem";
+import { createRelayer, type Relayer } from "./relayer.ts";
 import { G$ } from "./reward.ts";
 import { createMemoryStore } from "./session/memory-store.ts";
 import { createRedisStore } from "./session/redis-store.ts";
@@ -77,6 +78,28 @@ export function getIdentityVerifier(): IdentityVerifier {
   return verifierSingleton;
 }
 
+let relayerSingleton: Relayer | null | undefined;
+
+/**
+ * Server-side WalletClient that calls GameRewards.redeem() after signing a voucher.
+ * Requires RELAYER_PRIVATE_KEY + RPC_URL. Optional in dev — skipped when absent.
+ */
+export function getRelayer(): Relayer | null {
+  if (relayerSingleton !== undefined) return relayerSingleton;
+  const pk = process.env.RELAYER_PRIVATE_KEY;
+  const rpcUrl = process.env.RPC_URL;
+  if (pk && rpcUrl) {
+    relayerSingleton = createRelayer(pk as Hex, rpcUrl);
+    return relayerSingleton;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("RELAYER_PRIVATE_KEY and RPC_URL are required in production");
+  }
+  console.warn("[config] No RELAYER_PRIVATE_KEY — settle will sign vouchers but skip on-chain relay.");
+  relayerSingleton = null;
+  return null;
+}
+
 /** Assemble settle parameters; validates the secrets /settle needs. */
 export function getSettleParams(): SettleParams {
   return {
@@ -90,5 +113,6 @@ export function getSettleParams(): SettleParams {
     dailyCap: G$(num("DAILY_CAP_GD", 6)),
     minMsPerTick: num("MIN_MS_PER_TICK", 50),
     voucherTtlMs: num("VOUCHER_TTL_MS", 10 * 60_000),
+    relayer: getRelayer() ?? undefined,
   };
 }
